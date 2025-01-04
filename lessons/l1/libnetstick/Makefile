@@ -1,6 +1,6 @@
 TARGET =
 TEST_TARGET = test.out
-SRC = netstick.c
+SRC = netstick.c test_req.c
 CFLAGS = 
 OBJ = $(SRC:.c=.o)
 
@@ -27,4 +27,4 @@ debug:
 	$(info )
 
 clean:
-	@rm -f test *.o 2> /dev/null
+	@rm -f test.out *.o 2> /dev/null
