@@ -1,26 +1,5 @@
-#include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
-#include "esp_mac.h"
-#include "esp_wifi.h"
-#include "esp_event.h"
-#include "esp_log.h"
-#include "esp_netif_net_stack.h"
-#include "esp_netif.h"
-#include "nvs_flash.h"
-#include "lwip/inet.h"
-#include "lwip/netdb.h"
-#include "lwip/sockets.h"
-#if IP_NAPT
-#include "lwip/lwip_napt.h"
-#endif
-#include "lwip/err.h"
-#include "lwip/sys.h"
+#include "softap_sta.h"
 
-#define EXAMPLE_ESP_WIFI_STA_SSID           CONFIG_ESP_WIFI_REMOTE_AP_SSID
-#define EXAMPLE_ESP_WIFI_STA_PASSWD         CONFIG_ESP_WIFI_REMOTE_AP_PASSWORD
-#define EXAMPLE_ESP_MAXIMUM_RETRY           CONFIG_ESP_MAXIMUM_STA_RETRY
 
 #if CONFIG_ESP_WIFI_AUTH_OPEN
 #define ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD   WIFI_AUTH_OPEN
@@ -58,7 +37,6 @@
 
 static const char *TAG_AP = "WiFi SoftAP";
 static const char *TAG_STA = "WiFi Sta";
-
 static int s_retry_num = 0;
 
 /* FreeRTOS event group to signal when we are connected/disconnected */
@@ -156,8 +134,8 @@ void softap_set_dns_addr(esp_netif_t *esp_netif_ap,esp_netif_t *esp_netif_sta)
     ESP_ERROR_CHECK_WITHOUT_ABORT(esp_netif_dhcps_start(esp_netif_ap));
 }
 
-void app_main(void)
-{
+int enable_wifi(){
+    int result = -1;
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
@@ -223,7 +201,6 @@ void app_main(void)
                  EXAMPLE_ESP_WIFI_STA_SSID, EXAMPLE_ESP_WIFI_STA_PASSWD);
     } else {
         ESP_LOGE(TAG_STA, "UNEXPECTED EVENT");
-        return;
     }
 
     /* Set sta as the default interface */
@@ -233,4 +210,6 @@ void app_main(void)
     if (esp_netif_napt_enable(esp_netif_ap) != ESP_OK) {
         ESP_LOGE(TAG_STA, "NAPT not enabled on the netif: %p", esp_netif_ap);
     }
+    result = 0;
+    return result;
 }
