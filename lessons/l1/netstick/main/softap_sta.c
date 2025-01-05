@@ -1,6 +1,5 @@
 #include "softap_sta.h"
 
-
 #if CONFIG_ESP_WIFI_AUTH_OPEN
 #define ESP_WIFI_SCAN_AUTH_MODE_THRESHOLD   WIFI_AUTH_OPEN
 #elif CONFIG_ESP_WIFI_AUTH_WEP
@@ -177,31 +176,32 @@ int enable_wifi(){
     esp_netif_t *esp_netif_sta = wifi_init_sta();
 
     /* Start WiFi */
-    ESP_ERROR_CHECK(esp_wifi_start() );
+    ESP_ERROR_CHECK(esp_wifi_start());
 
     /*
      * Wait until either the connection is established (WIFI_CONNECTED_BIT) or
      * connection failed for the maximum number of re-tries (WIFI_FAIL_BIT).
      * The bits are set by event_handler() (see above)
      */
-    EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
-                                           WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
-                                           pdFALSE,
-                                           pdFALSE,
-                                           portMAX_DELAY);
+    //EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
+    //                                       WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
+    //                                       pdFALSE,
+    //                                       pdFALSE,
+    //                                       //portMAX_DELAY);
+    //                                       pdMS_TO_TICKS(10000));
 
-    /* xEventGroupWaitBits() returns the bits before the call returned,
-     * hence we can test which event actually happened. */
-    if (bits & WIFI_CONNECTED_BIT) {
-        ESP_LOGI(TAG_STA, "connected to ap SSID:%s password:%s",
-                 EXAMPLE_ESP_WIFI_STA_SSID, EXAMPLE_ESP_WIFI_STA_PASSWD);
-        softap_set_dns_addr(esp_netif_ap,esp_netif_sta);
-    } else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGI(TAG_STA, "Failed to connect to SSID:%s, password:%s",
-                 EXAMPLE_ESP_WIFI_STA_SSID, EXAMPLE_ESP_WIFI_STA_PASSWD);
-    } else {
-        ESP_LOGE(TAG_STA, "UNEXPECTED EVENT");
-    }
+    ///* xEventGroupWaitBits() returns the bits before the call returned,
+    // * hence we can test which event actually happened. */
+    //if (bits & WIFI_CONNECTED_BIT) {
+    //    ESP_LOGI(TAG_STA, "connected to ap SSID:%s password:%s",
+    //             EXAMPLE_ESP_WIFI_STA_SSID, EXAMPLE_ESP_WIFI_STA_PASSWD);
+    //    softap_set_dns_addr(esp_netif_ap,esp_netif_sta);
+    //} else if (bits & WIFI_FAIL_BIT) {
+    //    ESP_LOGI(TAG_STA, "Failed to connect to SSID:%s, password:%s",
+    //             EXAMPLE_ESP_WIFI_STA_SSID, EXAMPLE_ESP_WIFI_STA_PASSWD);
+    //} else {
+    //    ESP_LOGE(TAG_STA, "UNEXPECTED EVENT");
+    //}
 
     /* Set sta as the default interface */
     esp_netif_set_default_netif(esp_netif_sta);
